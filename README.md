@@ -7,7 +7,7 @@ Build the container and serve the page locally:
 
 ```sh
 docker build -t wheel .
-docker run -p 8080:80 wheel
+docker run -p 8080:8080 wheel
 ```
 
 Or with docker compose:
