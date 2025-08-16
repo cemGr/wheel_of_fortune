@@ -110,13 +110,13 @@ var padding={top:20,right:20,bottom:20,left:20},
     color=d3.scale.category20();
 const TROST_INDEX=7;
 var data = [
- {label:"100€ Ikea Gutschein", value:1, question:"Knapp daneben! Dein Wohnzimmer muss noch warten 😅"},
- {label:"Europapark Ticket", value:1, question:"Leider kein Adrenalinkick – aber vielleicht beim nächsten Dreh 🎢"},
- {label:"Beinahe Jackpot", value:1, question:"Die Menge tobt – doch das richtige Feld war nur einen Hauch entfernt..."},
- {label:"Nochmal drehen?", value:1, question:"Der Moderator gönnt dir eine Extra-Chance 🔄"},
- {label:"Niete", value:1, question:"Immerhin kein Totalverlust, dreh nochmal!"},
- {label:"Therme Erding für Zwei", value:1, question:"Heiße Quellen bleiben heute kalt 💦"},
- {label:"⭐ Staubsaugerroboter", value:1, question:"Oh nein! Knapp am ultimativen Gewinn vorbeigeschrammt 🤖"},
+ {label:"🛍️ 100€ Ikea", value:1, question:"Knapp daneben! Dein Wohnzimmer muss noch warten 😅"},
+ {label:"🎢 Europapark", value:1, question:"Leider kein Adrenalinkick – aber vielleicht beim nächsten Dreh 🎢"},
+ {label:"🎰 Beinahe Jackpot", value:1, question:"Die Menge tobt – doch das richtige Feld war nur einen Hauch entfernt..."},
+ {label:"🔄 Extra Dreh", value:1, question:"Der Moderator gönnt dir eine Extra-Chance 🔄"},
+ {label:"🙈 Niete", value:1, question:"Immerhin kein Totalverlust, dreh nochmal!"},
+ {label:"💦 Therme Erding", value:1, question:"Heiße Quellen bleiben heute kalt 💦"},
+ {label:"⭐ Staubsaugerbot", value:1, question:"Oh nein! Knapp am ultimativen Gewinn vorbeigeschrammt 🤖"},
  {label:"🎁 Eis-Date", value:1, question:"Happy Birthday Sammy! Dein echtes Geschenk ist ein Eis-Date 🍦🎉"}
 ];
 
@@ -150,11 +150,11 @@ arcs.append("text")
     .attr("transform",function(d,i){
        d.innerRadius=0; d.outerRadius=r;
        d.angle=(d.startAngle+d.endAngle)/2;
-       var radius=d.outerRadius-10;
-       return "rotate("+(d.angle*180/Math.PI-90)+")translate("+radius+")";
+       var radius=r*0.6;
+       return "rotate("+(d.angle*180/Math.PI-90)+")translate("+radius+")rotate(180)";
     })
-    .attr("text-anchor","end")
-    .style("font-size","12px")
+    .attr("text-anchor","middle")
+    .style("font-size","16px")
     .style("dominant-baseline","middle")
     .text(function(d,i){return data[i].label;});
 
@@ -181,17 +181,6 @@ function playTone(freq,duration){
     gain.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+duration);
     osc.stop(audioCtx.currentTime+duration);
 }
-var drum;
-function startDrum(){
-    if(!audioCtx||muted)return;
-    drum=audioCtx.createOscillator();
-    var g=audioCtx.createGain();
-    drum.type="square"; drum.frequency.value=100;
-    drum.connect(g); g.connect(audioCtx.destination);
-    g.gain.setValueAtTime(0.3,audioCtx.currentTime);
-    drum.start();
-}
-function stopDrum(){if(drum){drum.stop(); drum=null;}}
 function applause(){if(!audioCtx||muted)return; for(var i=0;i<5;i++){setTimeout(function(){playTone(200+Math.random()*200,0.3);},i*150);}}
 function tick(){playTone(800,0.05);}
 function ooh(){playTone(300,0.5);}
@@ -235,7 +224,6 @@ function spin(){
 
 function phase2(){
    overlay.style.display="none";
-   startDrum();
    var ps=360/data.length;
    var picked2=TROST_INDEX;
    var turns2=4+Math.floor(Math.random()*3);
@@ -247,7 +235,6 @@ function phase2(){
        .each("start",function(){tickTimer=setInterval(tick,60);})
        .each("end",function(){
            clearInterval(tickTimer);
-           stopDrum();
            oldrotation=rotation;
            d3.select("#question h1").text(data[picked2].question);
            try{confetti({particleCount:150,spread:70,origin:{y:0.6}});}catch(e){}
