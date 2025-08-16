@@ -112,7 +112,7 @@ const TROST_INDEX=7;
 var data = [
  {label:"100€ Ikea Gutschein", value:1, question:"Knapp daneben! Dein Wohnzimmer muss noch warten 😅"},
  {label:"Europapark Ticket", value:1, question:"Leider kein Adrenalinkick – aber vielleicht beim nächsten Dreh 🎢"},
- {label:"Fast der Hauptgewinn", value:1, question:"Die Menge tobt – doch das richtige Feld war nur einen Hauch entfernt..."},
+ {label:"Beinahe Jackpot", value:1, question:"Die Menge tobt – doch das richtige Feld war nur einen Hauch entfernt..."},
  {label:"Nochmal drehen?", value:1, question:"Der Moderator gönnt dir eine Extra-Chance 🔄"},
  {label:"Niete", value:1, question:"Immerhin kein Totalverlust, dreh nochmal!"},
  {label:"Therme Erding für Zwei", value:1, question:"Heiße Quellen bleiben heute kalt 💦"},
@@ -150,13 +150,10 @@ arcs.append("text")
     .attr("transform",function(d,i){
        d.innerRadius=0; d.outerRadius=r;
        d.angle=(d.startAngle+d.endAngle)/2;
-       var l=data[i].label.length;
-       var radius=d.outerRadius-40;
-       if(l<10) radius=d.outerRadius-30;
-       else if(l>20) radius=d.outerRadius-60;
+       var radius=d.outerRadius-10;
        return "rotate("+(d.angle*180/Math.PI-90)+")translate("+radius+")";
     })
-    .attr("text-anchor","middle")
+    .attr("text-anchor","end")
     .style("font-size","12px")
     .style("dominant-baseline","middle")
     .text(function(d,i){return data[i].label;});
@@ -217,12 +214,12 @@ function spin(){
      picked1=Math.floor(Math.random()*data.length);
    }while(picked1===TROST_INDEX || picked1===6);
 
-   var turns1=3+Math.floor(Math.random()*2);
+   var turns1=5+Math.floor(Math.random()*3);
    rotation=turns1*360 - picked1*ps;
    rotation += 90 - ps/2;
 
    vis.transition()
-       .duration(4000)
+       .duration(5000)
        .attrTween("transform",rotTween)
        .each("start",function(){tickTimer=setInterval(tick,60);})
        .each("end",function(){
@@ -241,11 +238,11 @@ function phase2(){
    startDrum();
    var ps=360/data.length;
    var picked2=TROST_INDEX;
-   var turns2=2+Math.floor(Math.random()*2);
+   var turns2=4+Math.floor(Math.random()*3);
    rotation=oldrotation + turns2*360 + (picked1 - picked2)*ps;
 
    vis.transition()
-       .duration(5000)
+       .duration(6000)
        .attrTween("transform",rotTween)
        .each("start",function(){tickTimer=setInterval(tick,60);})
        .each("end",function(){
