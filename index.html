@@ -40,6 +40,7 @@ body{
   max-height:500px;
   filter:drop-shadow(0 0 15px gold);
 }
+#chart .slice text{font-size:.8rem;}
 #question{
   margin-top:20px;
   text-align:center;
@@ -116,20 +117,23 @@ var padding={top:20,right:20,bottom:20,left:20},
     r=Math.min(w,h)/2,
     rotation=0,
     oldrotation=0,
-    picked=100000,
-    oldpick=[],
     color=d3.scale.category20();
-const TROST_INDEX=7;
 var data=[
- {label:"Beinahe Jackpot!",value:1,question:"Uff! Das war richtig knapp… versuch’s nochmal!"},
- {label:"Niete – weiter geht’s",value:1,question:"Keine Sorge, in der nächsten Runde wird’s was… vielleicht 😇"},
- {label:"Fast der Hauptgewinn",value:1,question:"Die Menge tobt! Doch das Feld zählt leider nicht…"},
- {label:"Nochmal drehen?",value:1,question:"Klar! Bühne frei für den nächsten Spin."},
- {label:"Glück im Unglück",value:1,question:"Nicht gewonnen, aber… da geht noch was!"},
- {label:"Bankrott (nur Spaß)",value:1,question:"Show-Gag! Dein Konto bleibt unberührt."},
- {label:"Hauptpreis ⭐",value:1,question:"Oh nein! Knapp verfehlt… das Feld war nur Deko fürs TV-Feeling."},
- {label:"🎁 Trostpreis – dein Geschenk",value:1,question:"Happy Birthday! Hier ist dein Geschenk 🎉"}
+ {label:"Beinahe Jackpot!",value:1,question:"Uff! Das war richtig knapp… versuch’s nochmal!",type:"neutral"},
+ {label:"Niete – weiter geht’s",value:1,question:"Keine Sorge, in der nächsten Runde wird’s was… vielleicht 😇",type:"neutral"},
+ {label:"Fast der Hauptgewinn",value:1,question:"Die Menge tobt! Doch das Feld zählt leider nicht…",type:"neutral"},
+ {label:"Nochmal drehen?",value:1,question:"Klar! Bühne frei für den nächsten Spin.",type:"neutral"},
+ {label:"Glück im Unglück",value:1,question:"Nicht gewonnen, aber… da geht noch was!",type:"neutral"},
+ {label:"Bankrott (nur Spaß)",value:1,question:"Show-Gag! Dein Konto bleibt unberührt.",type:"neutral"},
+ {label:"Hauptpreis ⭐",value:1,question:"Oh nein! Knapp verfehlt… das Feld war nur Deko fürs TV-Feeling.",type:"haupt"},
+ {label:"🎁 Trostpreis – dein Geschenk",value:1,question:"Happy Birthday! Hier ist dein Geschenk 🎉",type:"trost"}
 ];
+var HAUPT=[],TROST=[],SAFE=[];
+for(var i=0;i<data.length;i++){
+    if(data[i].type==="haupt")HAUPT.push(i);
+    if(data[i].type==="trost")TROST.push(i);
+    if(data[i].type!=="haupt")SAFE.push(i);
+}
 
 var svg=d3.select("#chart")
           .append("svg")
@@ -160,7 +164,7 @@ arcs.append("text")
     .attr("transform",function(d){
        d.innerRadius=0; d.outerRadius=r;
        d.angle=(d.startAngle+d.endAngle)/2;
-       return "rotate("+(d.angle*180/Math.PI-90)+")translate("+(d.outerRadius-10)+")";
+       return "rotate("+(d.angle*180/Math.PI-90)+")translate("+(d.outerRadius-30)+")";
     })
     .attr("text-anchor","end")
     .text(function(d,i){return data[i].label;});
@@ -215,16 +219,18 @@ var tickTimer;
 var picked1;
 
 function spin(){
+   if(audioCtx&&audioCtx.state==="suspended")audioCtx.resume();
    spinBtn.disabled=true;
+   giftBtn.style.display="none";
+   overlay.style.display="none";
    var ps=360/data.length;
+   picked1=Math.floor(Math.random()*data.length);
 
-   do{
-     picked1=Math.floor(Math.random()*data.length);
-   }while(picked1===TROST_INDEX || picked1===6);
-
-   var turns1=3+Math.floor(Math.random()*2);
-   rotation=turns1*360 - picked1*ps;
-   rotation += 90 - ps/2;
+   var target=picked1*ps;
+   var base=((oldrotation-(90-ps/2))%360+360)%360;
+   var delta=(target-base+360)%360;
+   var turns1=3+Math.floor(Math.random()*3);
+   rotation=oldrotation + turns1*360 + delta + (90-ps/2);
 
    vis.transition()
        .duration(4000)
@@ -234,20 +240,31 @@ function spin(){
            clearInterval(tickTimer);
            oldrotation=rotation;
            d3.select("#question h1").text(data[picked1].question);
-           overlay.style.display="block";
-           overlay.textContent=Math.random()>0.5?"Zweite Chance!":"Super-Spin!";
-           ooh();
-           setTimeout(phase2,800+Math.random()*700);
+           if(HAUPT.indexOf(picked1)===-1){
+               if(TROST.indexOf(picked1)!==-1){
+                   try{confetti({particleCount:150,spread:70,origin:{y:0.6}});}catch(e){}
+                   applause();
+                   giftBtn.style.display="block";
+               }
+               spinBtn.disabled=false;
+           }else{
+               overlay.textContent=Math.random()>0.5?"Zweite Chance!":"Super-Spin!";
+               overlay.style.display="block";
+               ooh();
+               startDrum();
+               setTimeout(function(){overlay.style.display="none";phase2();},800+Math.random()*700);
+           }
        });
 }
 
 function phase2(){
-   overlay.style.display="none";
-   startDrum();
    var ps=360/data.length;
-   var picked2=TROST_INDEX;
+   var picked2=TROST[Math.floor(Math.random()*TROST.length)];
+   var target=picked2*ps;
+   var base=((oldrotation-(90-ps/2))%360+360)%360;
+   var delta=(target-base+360)%360;
    var turns2=2+Math.floor(Math.random()*2);
-   rotation=oldrotation + turns2*360 + (picked1 - picked2)*ps;
+   rotation=oldrotation + turns2*360 + delta + (90-ps/2);
 
    vis.transition()
        .duration(5000)
