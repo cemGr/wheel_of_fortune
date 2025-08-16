@@ -120,16 +120,17 @@ var padding={top:20,right:20,bottom:20,left:20},
     oldpick=[],
     color=d3.scale.category20();
 const TROST_INDEX=7;
-var data=[
- {label:"Beinahe Jackpot!",value:1,question:"Uff! Das war richtig knapp… versuch’s nochmal!"},
- {label:"Niete – weiter geht’s",value:1,question:"Keine Sorge, in der nächsten Runde wird’s was… vielleicht 😇"},
- {label:"Fast der Hauptgewinn",value:1,question:"Die Menge tobt! Doch das Feld zählt leider nicht…"},
- {label:"Nochmal drehen?",value:1,question:"Klar! Bühne frei für den nächsten Spin."},
- {label:"Glück im Unglück",value:1,question:"Nicht gewonnen, aber… da geht noch was!"},
- {label:"Bankrott (nur Spaß)",value:1,question:"Show-Gag! Dein Konto bleibt unberührt."},
- {label:"Hauptpreis ⭐",value:1,question:"Oh nein! Knapp verfehlt… das Feld war nur Deko fürs TV-Feeling."},
- {label:"🎁 Trostpreis – dein Geschenk",value:1,question:"Happy Birthday! Hier ist dein Geschenk 🎉"}
+var data = [
+ {label:"100 € Ikea Guthaben", value:1, question:"Knapp daneben! Dein Wohnzimmer muss noch warten 😅"},
+ {label:"Europapark Ticket", value:1, question:"Leider kein Adrenalinkick – aber vielleicht beim nächsten Dreh 🎢"},
+ {label:"Fast der Hauptgewinn", value:1, question:"Die Menge tobt – doch das richtige Feld war nur einen Hauch entfernt..."},
+ {label:"Nochmal drehen?", value:1, question:"Der Moderator gönnt dir eine Extra-Chance 🔄"},
+ {label:"Niete", value:1, question:"Immerhin kein Totalverlust, dreh nochmal!"},
+ {label:"Therme Erding Gutschein für 2", value:1, question:"Heiße Quellen bleiben heute kalt 💦"},
+ {label:"⭐ Hauptpreis: Staubsaugerroboter AI", value:1, question:"Oh nein! Knapp am ultimativen Gewinn vorbeigeschrammt 🤖"},
+ {label:"🎁 Trostpreis: Eis essen gehen", value:1, question:"Happy Birthday Sammy! Dein echtes Geschenk ist ein Eis-Date 🍦🎉"}
 ];
+
 
 var svg=d3.select("#chart")
           .append("svg")
