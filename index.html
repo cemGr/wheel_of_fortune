@@ -44,7 +44,7 @@ body{
   margin-top:20px;
   text-align:center;
 }
-#question h1{font-size:1.3rem;font-weight:bold;margin:0;max-width:90vw;word-wrap:break-word;}
+#question h1{font-size:1.3rem;font-weight:bold;margin:0;max-width:90vw;overflow-wrap:anywhere;}
 #spinBtn{
   margin-top:20px;
   padding:1rem 2rem;
@@ -110,14 +110,14 @@ var padding={top:20,right:20,bottom:20,left:20},
     color=d3.scale.category20();
 const TROST_INDEX=7;
 var data = [
- {label:"100 € Ikea Guthaben", value:1, question:"Knapp daneben! Dein Wohnzimmer muss noch warten 😅"},
+ {label:"100€ Ikea Gutschein", value:1, question:"Knapp daneben! Dein Wohnzimmer muss noch warten 😅"},
  {label:"Europapark Ticket", value:1, question:"Leider kein Adrenalinkick – aber vielleicht beim nächsten Dreh 🎢"},
  {label:"Fast der Hauptgewinn", value:1, question:"Die Menge tobt – doch das richtige Feld war nur einen Hauch entfernt..."},
  {label:"Nochmal drehen?", value:1, question:"Der Moderator gönnt dir eine Extra-Chance 🔄"},
  {label:"Niete", value:1, question:"Immerhin kein Totalverlust, dreh nochmal!"},
- {label:"Therme Erding Gutschein für 2", value:1, question:"Heiße Quellen bleiben heute kalt 💦"},
- {label:"⭐ Hauptpreis: Staubsaugerroboter AI", value:1, question:"Oh nein! Knapp am ultimativen Gewinn vorbeigeschrammt 🤖"},
- {label:"🎁 Trostpreis: Eis essen gehen", value:1, question:"Happy Birthday Sammy! Dein echtes Geschenk ist ein Eis-Date 🍦🎉"}
+ {label:"Therme Erding für Zwei", value:1, question:"Heiße Quellen bleiben heute kalt 💦"},
+ {label:"⭐ Staubsaugerroboter", value:1, question:"Oh nein! Knapp am ultimativen Gewinn vorbeigeschrammt 🤖"},
+ {label:"🎁 Eis-Date", value:1, question:"Happy Birthday Sammy! Dein echtes Geschenk ist ein Eis-Date 🍦🎉"}
 ];
 
 
@@ -147,13 +147,18 @@ arcs.append("path")
     .attr("d",arc);
 
 arcs.append("text")
-    .attr("transform",function(d){
+    .attr("transform",function(d,i){
        d.innerRadius=0; d.outerRadius=r;
        d.angle=(d.startAngle+d.endAngle)/2;
-       return "rotate("+(d.angle*180/Math.PI-90)+")translate("+(d.outerRadius-40)+")";
+       var l=data[i].label.length;
+       var radius=d.outerRadius-40;
+       if(l<10) radius=d.outerRadius-30;
+       else if(l>20) radius=d.outerRadius-60;
+       return "rotate("+(d.angle*180/Math.PI-90)+")translate("+radius+")";
     })
-    .attr("text-anchor","end")
+    .attr("text-anchor","middle")
     .style("font-size","12px")
+    .style("dominant-baseline","middle")
     .text(function(d,i){return data[i].label;});
 
 svg.append("g")
