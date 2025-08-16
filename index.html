@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Wheel of Fortune</title>
 <style>
-html,body{margin:0;height:100%;overflow:hidden;}
+html,body{margin:0;height:100%;overflow-x:hidden;overflow-y:auto;}
 body{
   display:flex;
   justify-content:center;
@@ -44,7 +44,7 @@ body{
   margin-top:20px;
   text-align:center;
 }
-#question h1{font-size:1.3rem;font-weight:bold;margin:0;}
+#question h1{font-size:1.3rem;font-weight:bold;margin:0;max-width:90vw;word-wrap:break-word;}
 #spinBtn{
   margin-top:20px;
   padding:1rem 2rem;
@@ -82,16 +82,6 @@ body{
   text-align:center;
   font-size:2rem;
 }
-#gift{
-  display:none;
-  margin-top:15px;
-  padding:1rem;
-  font-size:1rem;
-  background:linear-gradient(#ffd700,#b8860b);
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-}
 @media(max-width:400px){
   #title{font-size:1.2rem;}
   #question h1{font-size:1rem;}
@@ -106,7 +96,6 @@ body{
 <div id="question" aria-live="polite"><h1></h1></div>
 <div id="overlay"></div>
 <button id="spinBtn" aria-label="Rad drehen">DREHEN</button>
-<button id="gift">Geschenk öffnen</button>
 <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <script>
@@ -161,9 +150,10 @@ arcs.append("text")
     .attr("transform",function(d){
        d.innerRadius=0; d.outerRadius=r;
        d.angle=(d.startAngle+d.endAngle)/2;
-       return "rotate("+(d.angle*180/Math.PI-90)+")translate("+(d.outerRadius-10)+")";
+       return "rotate("+(d.angle*180/Math.PI-90)+")translate("+(d.outerRadius-40)+")";
     })
     .attr("text-anchor","end")
+    .style("font-size","12px")
     .text(function(d,i){return data[i].label;});
 
 svg.append("g")
@@ -174,7 +164,6 @@ svg.append("g")
 
 var spinBtn=document.getElementById("spinBtn");
 var overlay=document.getElementById("overlay");
-var giftBtn=document.getElementById("gift");
 var muteBtn=document.getElementById("mute");
 var muted=false;
 
@@ -261,8 +250,7 @@ function phase2(){
            d3.select("#question h1").text(data[picked2].question);
            try{confetti({particleCount:150,spread:70,origin:{y:0.6}});}catch(e){}
            applause();
-           giftBtn.style.display="block";
-           spinBtn.disabled=false;
+           spinBtn.remove();
        });
 }
 
