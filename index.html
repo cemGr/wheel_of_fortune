@@ -146,19 +146,26 @@ arcs.append("path")
     .attr("fill",function(d,i){return color(i);})
     .attr("d",arc);
 
-arcs.append("text")
-    .attr("transform",function(d,i){
-       d.innerRadius=0; d.outerRadius=r;
-       d.angle=(d.startAngle+d.endAngle)/2;
-       var radius=r*0.6;
-       var angle=d.angle*180/Math.PI-90;
-       var flip=(angle>-90 && angle<90)?180:0;
-       return "rotate("+angle+")translate("+radius+")rotate("+flip+")";
-    })
-    .attr("text-anchor","middle")
-    .style("font-size","16px")
-    .style("dominant-baseline","middle")
-    .text(function(d,i){return data[i].label;});
+ arcs.append("text")
+     .attr("text-anchor","middle")
+     .style("font-size","16px")
+     .style("dominant-baseline","middle")
+     .text(function(d,i){return data[i].label;});
+
+ function positionLabels(){
+     arcs.selectAll("text")
+         .attr("transform",function(d){
+             d.innerRadius=0; d.outerRadius=r;
+             d.angle=(d.startAngle+d.endAngle)/2;
+             var radius=r*0.6;
+             var angle=d.angle*180/Math.PI-90;
+             var orient=(angle+rotation+360)%360;
+             var flip=(orient>90 && orient<270)?180:0;
+             return "rotate("+angle+")translate("+radius+")rotate("+flip+")";
+         });
+ }
+
+ positionLabels();
 
 svg.append("g")
    .attr("transform","translate("+(w+padding.left)+","+(h/2+padding.top)+")")
@@ -215,9 +222,10 @@ function spin(){
        .each("start",function(){tickTimer=setInterval(tick,60);})
        .each("end",function(){
            clearInterval(tickTimer);
-           oldrotation=rotation;
-           d3.select("#question h1").text(data[picked1].question);
-           if(picked1===3 || picked1===4){
+            oldrotation=rotation;
+            positionLabels();
+            d3.select("#question h1").text(data[picked1].question);
+            if(picked1===3 || picked1===4){
                overlay.style.display="block";
                overlay.textContent=Math.random()>0.5?"Zweite Chance!":"Super-Spin!";
                ooh();
@@ -242,8 +250,9 @@ function phase2(){
        .each("end",function(){
            clearInterval(tickTimer);
            oldrotation=rotation;
+           positionLabels();
            d3.select("#question h1").text(data[picked2].question);
-           try{confetti({particleCount:150,spread:70,origin:{y:0.6}});}catch(e){}
+            try{confetti({particleCount:150,spread:70,origin:{y:0.6}});}catch(e){}
            applause();
            spinBtn.remove();
        });
