@@ -152,7 +152,8 @@ arcs.append("text")
        d.angle=(d.startAngle+d.endAngle)/2;
        var radius=r*0.6;
        var angle=d.angle*180/Math.PI-90;
-       return "rotate("+angle+")translate("+radius+")rotate("+(-angle)+")";
+       var flip=(angle>-90 && angle<90)?180:0;
+       return "rotate("+angle+")translate("+radius+")rotate("+flip+")";
     })
     .attr("text-anchor","middle")
     .style("font-size","16px")
